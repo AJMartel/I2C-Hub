@@ -14,20 +14,26 @@
 
 void setup()
 {
-  Wire.begin();        // join i2c bus (address optional for master)
   Serial.begin(9600);  // start serial for output
-  Wire.send(0x00);
+  Wire.begin(0x0D); 
 }
+
+byte a[10];
 
 void loop()
 {
-  Wire.requestFrom(0x0D, 23);    // request 6 bytes from slave device #2
-
-  while(Wire.available())    // slave may send less than requested
-  { 
-    int c = Wire.receive(); // receive a byte as character
-    Serial.print(c);         // print the character
-  }
-Serial.println();  
-  delay(1);
+Wire.beginTransmission(0x0D);
+Wire.send(0);
+Wire.endTransmission();  
+Wire.requestFrom(0x0D, 23);
+   for (int i=0; i <= 22; i++){
+      a[i]=Wire.receive();
+   }  
+   Serial.print(a[18],DEC);  //buttons blue=64 red=32 green=16
+   Serial.print(' '); 
+   Serial.print(a[19],DEC); //buttons also blue=4 red=2 green=1
+   Serial.print(' ');
+   Serial.print(a[20],DEC); //rotation speed >0 clockwise <255 anticlockwise
+   Serial.print(' ');
+   Serial.println(a[21],DEC); //rotation dir 0=clockwise 255=anticlockwise
 }
